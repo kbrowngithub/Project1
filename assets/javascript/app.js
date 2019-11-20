@@ -64,6 +64,7 @@ $('#getLocation').on('click', function () {
 $("#search").keypress(function (event) {
     if (event.which == 13) {
         event.preventDefault();
+        validateAddress($("#search").val());
         $("tbody").empty();
         getMapData($("#search").val());
     }
@@ -111,3 +112,43 @@ function showVenues(json) {
     }
 }
 
+function validateAddress(address) {
+    var addr;
+    var city;
+    var state;
+
+    if (address !== undefined && address !== null) {
+        if (address.indexOf(",") !== -1) {
+            addr = address.split(",");
+        }
+        else {
+            addr = address.split(" ");
+        }
+        state = addr.pop().trim();
+        city = addr.join(" ").trim();
+        console.log("City = " + city);
+        console.log("State = " + state);
+
+        $.ajax({
+            type: "GET",
+            url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city="+city+"&state="+state.trim(),
+            async: true,
+            dataType: "json",
+            success: function (json) {
+                console.log(JSON.stringify(json));
+
+                if (json[0].status === blank || json[0].status === invalid_state || json[0].status === invalid_city) {
+                    console.log("json[0].status = " + json[0].status);
+                    console.log("json[0].reason = " + json[0].reason);
+                }
+                
+            },
+            error: function (xhr, status, err) {
+                console.log(err);
+            }
+        });
+    }
+    else {
+        console.log("Invalid city/state");
+    }
+}
