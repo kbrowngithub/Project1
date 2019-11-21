@@ -239,3 +239,4 @@ function clearErrModal() {
     modal.style.display = "none";
     $("#search").val("");
 }
+
