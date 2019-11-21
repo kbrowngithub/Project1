@@ -112,6 +112,9 @@ function showVenues(json) {
     }
 }
 
+var modal = document.getElementById("myModal");
+var modalJQ = $("#myModal");
+
 function validateAddress(address) {
     var addr;
     var city;
@@ -131,17 +134,21 @@ function validateAddress(address) {
 
         $.ajax({
             type: "GET",
-            url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city="+city+"&state="+state.trim(),
+            url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city=" + city + "&state=" + state.trim(),
             async: true,
             dataType: "json",
             success: function (json) {
                 console.log(JSON.stringify(json));
 
-                if (json[0].status === blank || json[0].status === invalid_state || json[0].status === invalid_city) {
+                if (json[0].status === "blank" || json[0].status === "invalid_state" || json[0].status === "invalid_city") {
                     console.log("json[0].status = " + json[0].status);
                     console.log("json[0].reason = " + json[0].reason);
+                    // Get the modal
+                    $(".modal-content").text(json[0].reason);
+                    modal.style.display = "block";
+
                 }
-                
+
             },
             error: function (xhr, status, err) {
                 console.log(err);
@@ -150,5 +157,31 @@ function validateAddress(address) {
     }
     else {
         console.log("Invalid city/state");
+    }
+}
+
+//
+// Modal code
+//
+
+var searchId = $("#search");
+function removeModal(searchId) {
+    modal.style.display = "none";
+    searchId.empty();
+    searchId.attr("placeholder", "test 'Denver, CO'");
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+    removeModal();
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+    if (event.target == modal) {
+        removeModal();
     }
 }
