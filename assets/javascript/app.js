@@ -1,3 +1,4 @@
+// Initialise the firebase database.
 var firebaseConfig = {
     apiKey: "AIzaSyDlFw-SrUXQdgRDqUvTkPZcwQm-tgIIgAw",
     authDomain: "hipsters-paradise.firebaseapp.com",
@@ -10,10 +11,11 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 database = firebase.database();
 
+// Initialise variables.
 var userKey;
 var currentSearch;
 
-
+// Grabs the map data from the openstreetmap API and turns city data into latitude and longitude, as well as handling errors.
 function getMapData(search) {
     $("#events > tbody").empty();
     $("#brewerys > tbody").empty();
@@ -59,6 +61,7 @@ function getMapData(search) {
     });
 }
 
+// Checks the getLocation button and saves the search for later.
 $('#getLocation').on('click', function () {
     navigator.geolocation.getCurrentPosition(function (position) {
         getMapData(position.coords.latitude + ',' + position.coords.longitude);
@@ -66,6 +69,7 @@ $('#getLocation').on('click', function () {
     });
 });
 
+// checks when the enter key is pressed while the search bar is focused
 $("#search").keypress(function (event) {
     if (event.which == 13) {
         event.preventDefault();
@@ -74,6 +78,7 @@ $("#search").keypress(function (event) {
     }
 });
 
+// takes in coordinates and searches for venues nearby using the ticketmaster API
 function findSuggest(coordinates) {
     if (coordinates === 0) {
         showVenues(0);
@@ -95,6 +100,7 @@ function findSuggest(coordinates) {
     }
 }
 
+// 
 function showVenues(json) {
     if (json !== 0 && json._embedded.venues !== undefined) {
         var events = json._embedded.venues;
