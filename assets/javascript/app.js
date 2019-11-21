@@ -171,7 +171,6 @@ function validateAddress(address) {
     var state;
 
     if (address !== undefined && address !== null) {
-
         if (address.indexOf(",") !== -1) {
             addr = address.split(",");
         }
