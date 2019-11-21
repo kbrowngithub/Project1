@@ -13,7 +13,6 @@ database = firebase.database();
 var userKey;
 var currentSearch;
 
-
 function getMapData(search) {
     $("#events > tbody").empty();
     var url = "https://nominatim.openstreetmap.org/?format=json&limit=1&addressdetails=1&countrycodes=US&q="
@@ -68,8 +67,9 @@ $("#search").keypress(function (event) {
     if (event.which == 13) {
         event.preventDefault();
         validateAddress($("#search").val());
-        getMapData($("#search").val());
-        currentSearch = $('#search').val().trim();
+
+        // getMapData($("#search").val());
+        // currentSearch = $('#search').val().trim();
     }
 });
 
@@ -115,31 +115,31 @@ function showVenues(json) {
     }
 }
 
-
-database.ref('.info/connected').on('value', function(snapshot){
-    if(snapshot.val() && !localStorage.getItem('userkey')){
+database.ref('.info/connected').on('value', function (snapshot) {
+    if (snapshot.val() && !localStorage.getItem('userkey')) {
         var user = database.ref('users').push(true);
         userKey = user.getKey();
         localStorage.setItem('userkey', userKey);
-    }else{
+    } else {
         userKey = localStorage.getItem('userkey');
     }
 });
 
-$('#saveButton').on('click', function(){
+$('#saveButton').on('click', function () {
     database.ref('users/' + userKey).push(currentSearch);
 });
 
-database.ref('users/' + userKey).on('child_added', function(snapshot){
-    $('#savedSearches').append('<tr><td>'+snapshot.val()+"</td><td><button class=restoreSearch data-search="+ snapshot.val() + ">Restore Search</button></tr>");
+database.ref('users/' + userKey).on('child_added', function (snapshot) {
+    $('#savedSearches').append('<tr><td>' + snapshot.val() + "</td><td><button class=restoreSearch data-search=" + snapshot.val() + ">Restore Search</button></tr>");
 });
 
-$(document.body).on('click', '.restoreSearch', function(){
+$(document.body).on('click', '.restoreSearch', function () {
     let search = $(this).data('search');
     getMapData(search.toString());
 });
-var modal = document.getElementById("myModal");
-var modalJQ = $("#myModal");
+
+var modal = document.getElementById("errModal");
+var modalJQ = $("#errModal");
 
 function validateAddress(address) {
     var addr;
@@ -147,6 +147,7 @@ function validateAddress(address) {
     var state;
 
     if (address !== undefined && address !== null) {
+
         if (address.indexOf(",") !== -1) {
             addr = address.split(",");
         }
@@ -169,16 +170,21 @@ function validateAddress(address) {
                 if (json[0].status === "blank" || json[0].status === "invalid_state" || json[0].status === "invalid_city") {
                     console.log("json[0].status = " + json[0].status);
                     console.log("json[0].reason = " + json[0].reason);
-                    // Get the modal
-                    $(".modal-content").text(json[0].reason);
+
+                    // Pop up the modal
                     modal.style.display = "block";
-
+                    $(".modal-content > p").text(json[0].reason);
                 }
-
+                else {
+                    getMapData($("#search").val());
+                    currentSearch = $('#search').val().trim();
+                }
             },
             error: function (xhr, status, err) {
                 console.log(err);
+
             }
+
         });
     }
     else {
@@ -186,28 +192,27 @@ function validateAddress(address) {
     }
 }
 
+function clearErrModal() {
+    // Kill the modal
+    modal.style.display = "none";
+    $("#search").val("");
+}
+
 //
 // Modal code
 //
-
-var searchId = $("#search");
-function removeModal(searchId) {
-    modal.style.display = "none";
-    searchId.empty();
-    searchId.attr("placeholder", "test 'Denver, CO'");
-}
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function () {
-    removeModal();
+    clearErrModal();
 }
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
     if (event.target == modal) {
-        removeModal();
+        clearErrModal();
     }
 }
