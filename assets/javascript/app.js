@@ -133,7 +133,7 @@ function getBreweriesByCity(city) {
             var newRow3 = $("<tr>").append(
                 $("<td>" + response[i].phone + "</td>")
             );
-            $("#brewreys").append(newRow1, newRow2, newRow3);
+            $("#brewerys").append(newRow1, newRow2, newRow3);
         }
     });
 };
