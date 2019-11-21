@@ -69,9 +69,6 @@ $("#search").keypress(function (event) {
     if (event.which == 13) {
         event.preventDefault();
         validateAddress($("#search").val());
-
-        // getMapData($("#search").val());
-        // currentSearch = $('#search').val().trim();
     }
 });
 
@@ -167,8 +164,9 @@ var modalJQ = $("#errModal");
 
 function validateAddress(address) {
     var addr;
-    var city;
-    var state;
+    var city = "";
+    var state = "";
+    var zip = "";
 
     if (address !== undefined && address !== null) {
         if (address.indexOf(",") !== -1) {
@@ -178,13 +176,19 @@ function validateAddress(address) {
             addr = address.split(" ");
         }
         state = addr.pop().trim();
+        if (state.match(/^[0-9]+$/) !== null) {
+            zip = state;
+            state = "";
+        }
+
         city = addr.join(" ").trim();
         console.log("City = " + city);
         console.log("State = " + state);
+        console.log("Zip = " + zip);
 
         $.ajax({
             type: "GET",
-            url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city=" + city + "&state=" + state.trim(),
+            url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city=" + city.trim() + "&state=" + state.trim() + "&zipcode=" + zip.trim(),
             async: true,
             dataType: "json",
             success: function (json) {
@@ -199,7 +203,7 @@ function validateAddress(address) {
                     $(".modal-content > p").text(json[0].reason);
                 }
                 else {
-                    getMapData($("#search").val());
+                    getMapData(city + "," + state + "," + zip);
                     currentSearch = $('#search').val().trim();
                 }
             },
@@ -215,19 +219,12 @@ function validateAddress(address) {
     }
 }
 
-function clearErrModal() {
-    // Kill the modal
-    modal.style.display = "none";
-    $("#search").val("");
-}
-
 //
 // Modal code
 //
 
 $(document.body).on('click', '.close', function () {
-    modal.style.display = "none";
-    $("#search").val("");
+    clearErrModal();
 });
 
 // When the user clicks anywhere outside of the modal, close it
@@ -235,4 +232,10 @@ window.onclick = function (event) {
     if (event.target == modal) {
         clearErrModal();
     }
+}
+
+function clearErrModal() {
+    // Kill the modal
+    modal.style.display = "none";
+    $("#search").val("");
 }
