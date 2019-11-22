@@ -124,16 +124,29 @@ function getBreweriesByCity(city) {
     }).then(function(response) {
         console.log(response);
         for (var i = 0; i < response.length; i++) {
-            var newRow1 = $("<tr>").append(
-                $("<td><a target='_blank' href=\"" + response[i].website_url + "\" style=\"display:block;\">" + response[i].name + "</a></td>")
-            );
-            var newRow2 = $("<tr>").append(
-                $("<td>Address: " + response[i].street + " " + response[i].postal_code + "</td>")
-            );
-            var newRow3 = $("<tr>").append(
-                $("<td style='border-bottom:1px solid #000;'>Phone: " + response[i].phone + "</td>")
-            );
-            $("#breweries").append(newRow1, newRow2, newRow3);
+            if (response[i].website_url === undefined || response[i].website_url.length == 0) {
+                var newRow1 = $("<tr>").append(
+                    $("<td>" + response[i].name + " (no website)</td>")
+                );
+                var newRow2 = $("<tr>").append(
+                    $("<td>" + response[i].street + " " + response[i].postal_code + "</td>")
+                );
+                var newRow3 = $("<tr>").append(
+                    $("<td>" + response[i].phone + "</td>")
+                );
+                $("#brewreys").append(newRow1, newRow2, newRow3);
+            } else {
+                var newRow1 = $("<tr>").append(
+                    $("<td><a href=\"" + response[i].website_url + "\" style=\"display:block;\">" + response[i].name + "</a></td>")
+                );
+                var newRow2 = $("<tr>").append(
+                    $("<td>" + response[i].street + " " + response[i].postal_code + "</td>")
+                );
+                var newRow3 = $("<tr>").append(
+                    $("<td>" + response[i].phone + "</td>")
+                );
+                $("#brewreys").append(newRow1, newRow2, newRow3);
+            }
         }
     });
 };
@@ -190,7 +203,8 @@ function validateAddress(address) {
 
         $.ajax({
             type: "GET",
-            url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city=" + city.trim() + "&state=" + state.trim() + "&zipcode=" + zip.trim(),
+            // url: "https://us-zipcode.api.smartystreets.com/lookup?auth-id=022252ec-6053-af31-55a2-1c8da629fa60&auth-token=f54PmDZdC6YfHW71XSFZ&city=" + city.trim() + "&state=" + state.trim() + "&zipcode=" + zip.trim(),
+            url: "https://us-zipcode.api.smartystreets.com/lookup?key=33707087724145303&city=" + city.trim() + "&state=" + state.trim() + "&zipcode=" + zip.trim(),
             async: true,
             dataType: "json",
             success: function (json) {
