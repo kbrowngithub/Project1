@@ -16,6 +16,7 @@ var currentSearch;
 function getMapData(search) {
     $("#events > tbody").empty();
     $("#breweries > tbody").empty();
+    $("#image-div").empty();
     var url = "https://nominatim.openstreetmap.org/?format=json&limit=1&addressdetails=1&countrycodes=US&q="
     var queryTerm = '';
     for (let i = 0; i < search.length; i++) {
@@ -45,6 +46,7 @@ function getMapData(search) {
                 });
                 findSuggest(lat + "," + lon);
                 getBreweriesByCity(city);
+                getPicture(city);
             } else {
                 console.log(response);
                 console.log('Invalid search');
@@ -240,3 +242,20 @@ function clearErrModal() {
     $("#search").val("");
 }
 
+function getPicture(city) {
+    var queryURL = "https://cors-anywhere.herokuapp.com/https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ca370d51a054836007519a00ff4ce59e&per_page=5&content_type=1&format=json&nojsoncallback=1&tags=" + city;
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(function(response) {
+        console.log(response);
+        for (var i = 0; i < response.photos.photo.length; i++) {
+            var image = $("<img>");
+            var flickrImages = "http://farm" + response.photos.photo[i].farm + ".staticflickr.com/" + response.photos.photo[i].server + "/" + response.photos.photo[i].id + "_" + response.photos.photo[i].secret + ".jpg"
+            image.attr("src", flickrImages)
+            image.attr("class", "images")
+            $("#image-div").append(image);
+            console.log(image);
+        }
+    });
+};
