@@ -158,7 +158,7 @@ $('#saveButton').on('click', function () {
 });
 
 database.ref('users/' + userKey).on('child_added', function (snapshot) {
-    $('#savedSearches').append('<tr><td>' + snapshot.val() + "</td><td><button class=restoreSearch data-search=" + snapshot.val() + ">Restore Search</button></tr>");
+    $('#savedSearches').append("<tr><td class = 'p-1 py-2'>" + snapshot.val() + "</td><td><button class=restoreSearch data-search=" + snapshot.val() + ">Restore Search</button></tr>");
 });
 
 $(document.body).on('click', '.restoreSearch', function () {
