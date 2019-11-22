@@ -243,7 +243,7 @@ function clearErrModal() {
 }
 
 function getPicture(city) {
-    var queryURL = "https://cors-anywhere.herokuapp.com/https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ca370d51a054836007519a00ff4ce59e&per_page=5&content_type=1&format=json&nojsoncallback=1&tags=" + city;
+    var queryURL = "https://cors-anywhere.herokuapp.com/https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ca370d51a054836007519a00ff4ce59e&per_page=4&content_type=1&format=json&nojsoncallback=1&tags=" + city;
     $.ajax({
         url: queryURL,
         method: "GET"
@@ -252,8 +252,9 @@ function getPicture(city) {
         for (var i = 0; i < response.photos.photo.length; i++) {
             var image = $("<img>");
             var flickrImages = "http://farm" + response.photos.photo[i].farm + ".staticflickr.com/" + response.photos.photo[i].server + "/" + response.photos.photo[i].id + "_" + response.photos.photo[i].secret + ".jpg"
-            image.attr("src", flickrImages)
-            image.attr("class", "images")
+            image.attr("src", flickrImages);
+            image.attr("class", "images");
+            image.attr("alt", "Pictures of " + city);
             $("#image-div").append(image);
             console.log(image);
         }
