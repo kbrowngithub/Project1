@@ -141,7 +141,7 @@ function getBreweriesByCity(city) {
                 var newRow3 = $("<tr>").append(
                     $("<td>" + response[i].phone + "</td>")
                 );
-                $("#brewreys").append(newRow1, newRow2, newRow3);
+                $("#breweries").append(newRow1, newRow2, newRow3);
             } else {
                 var newRow1 = $("<tr>").append(
                     $("<td><a target='_blank' href=\"" + response[i].website_url + "\" style=\"display:block;\">" + response[i].name + "</a></td>")
@@ -152,7 +152,7 @@ function getBreweriesByCity(city) {
                 var newRow3 = $("<tr>").append(
                     $("<td>" + response[i].phone + "</td>")
                 );
-                $("#brewreys").append(newRow1, newRow2, newRow3);
+                $("#breweries").append(newRow1, newRow2, newRow3);
             }
         }
     });
